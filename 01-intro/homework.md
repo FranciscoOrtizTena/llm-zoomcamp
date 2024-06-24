@@ -61,6 +61,8 @@ Which function do you use for adding your data to elastic?
 - add
 
 ```python
+es_client_homework = Elasticsearch('http://localhost:9200')
+
 index_settings = {
     "settings": {
         "number_of_shards": 1,
@@ -95,11 +97,45 @@ Use only `question` and `text` fields and give `question` a boost of 4, and use 
 What's the score for the top ranking result?
 
 * 94.05
-* 84.05
+* `84.05`
 * 74.05
 * 64.05
 
 Look at the `_score` field.
+
+```python
+def elastic_search_homework(query):
+
+    search_query = {
+        "size": 10,
+        "query": {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": query,
+                        "fields": ["question^4", "text"],
+                        "type": "best_fields"
+                    }
+                },
+#                "filter": {
+#                    "term": {
+#                        "course": "data-engineering-zoomcamp"
+#                    }
+#                }
+            }
+        }
+    }
+    
+    response = es_client.search(index=index_name, body=search_query)
+    
+    result_docs = []
+    for hit in response['hits']['hits']:
+        result_docs.append(hit['_score'])
+
+    return result_docs
+
+elastic_search_homework('"How do I execute a command in a running docker container?"')[0]
+```
 
 ## Q4. Filtering
 
@@ -107,10 +143,43 @@ Now let's only limit the questions to `machine-learning-zoomcamp`.
 
 Return 3 results. What's the 3rd question returned by the search engine?
 
-* How do I debug a docker container?
-* How do I copy files from a different folder into docker container’s working directory?
-* How do Lambda container images work?
-* How can I annotate a graph?
+- How do I debug a docker container?
+- `How do I copy files from a different folder into docker container’s working directory?`
+- How do Lambda container images work?
+- How can I annotate a graph?
+
+```python
+def elastic_search_homework(query):
+
+    search_query = {
+        "size": 3,
+        "query": {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": query,
+                        "fields": ["question^4", "text"],
+                        "type": "best_fields"
+                    }
+                },
+                "filter": {
+                    "term": {
+                        "course": "machine-learning-zoomcamp"
+                    }
+                }
+            }
+        }
+    }
+    
+    response = es_client.search(index=index_name, body=search_query)
+    
+    result_docs = []
+    for hit in response['hits']['hits']:
+        result_docs.append(hit['_source'])
+
+    return result_docs
+elastic_search_homework('"How do I execute a command in a running docker container?"')[2]['question']
+```
 
 ## Q5. Building a prompt
 
@@ -141,10 +210,64 @@ CONTEXT:
 
 What's the length of the resulting prompt? (use the `len` function)
 
-* 962
-* 1462
-* 1962
-* 2462
+- 962
+- `1462`
+- 1962
+- 2462
+
+```python
+query = 'How do I execute a command in a running docker container?'
+
+search_query = {
+    "size": 3,
+    "query": {
+        "bool": {
+            "must": {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["question^4", "text"],
+                    "type": "best_fields"
+                }
+            },
+            "filter": {
+                "term": {
+                    "course": "machine-learning-zoomcamp"
+                }
+            }
+        }
+    }
+}
+
+response = es_client.search(index=index_name, body=search_query)
+
+result_docs = []
+for hit in response['hits']['hits']:
+    result_docs.append(hit['_source'])
+```
+
+```python
+def build_prompt(query, search_results):
+
+    prompt_template = """
+You're a course teaching assistant. Answer the QUESTION based on the CONTEXT from the FAQ database.
+Use only the facts from the CONTEXT when answering the QUESTION.
+
+QUESTION: {question}
+
+CONTEXT:
+{context}
+    """.strip()
+    
+    context = ""
+    
+    for doc in search_results:
+        context = context + f"Q: {doc['question']}\nA: {doc['text']}\n\n"
+    
+    prompt = prompt_template.format(question=query, context=context).strip()
+
+    return prompt
+len(build_prompt(query, result_docs))
+```
 
 ## Q6. Tokens
 
@@ -165,10 +288,17 @@ encoding = tiktoken.encoding_for_model("gpt-4o")
 
 Use the `encode` function. How many tokens does our prompt have?
 
-* 122
-* 222
-* 322
-* 422
+- 122
+- 222
+- `322`
+- 422
+
+```python
+encoding = tiktoken.encoding_for_model("gpt-4o")
+promtp_homework = build_prompt(query, result_docs)
+tokens = encoding.encode(promtp_homework)
+len(tokens)
+```
 
 Note: to decode back a token into a word, you can use the `decode_single_token_bytes` function:
 
