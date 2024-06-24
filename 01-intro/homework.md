@@ -14,6 +14,7 @@ curl localhost:9200
 
 What's the `version.build_hash` value?
 
+`42f05b9372a9a4a470db3b52817899b99a76ee73`
 
 ## Getting the data
 
@@ -54,10 +55,34 @@ pip install elasticsearch
 
 Which function do you use for adding your data to elastic?
 
-* `insert`
-* `index`
-* `put`
-* `add`
+- insert
+- `index`
+- put
+- add
+
+```python
+index_settings = {
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "properties": {
+            "text": {"type": "text"},
+            "section": {"type": "text"},
+            "question": {"type": "text"},
+            "course": {"type": "keyword"} 
+        }
+    }
+}
+
+index_name = "course-questions-homework"
+
+es_client_homework.indices.create(index=index_name, body=index_settings)
+
+for doc in tqdm(documents):
+    es_client.index(index=index_name, document=doc)
+```
 
 ## Q3. Searching
 
