@@ -73,14 +73,27 @@ Now pull the model:
 docker exec -it ollama ollama pull gemma:2b 
 ```
 
+
+
 What's the size of the `ollama_files/models` folder? 
 
 * 0.6G
 * 1.2G
-* 1.7G
+* `1.7G`
 * 2.2G
 
 Hint: on linux, you can use `du -h` for that.
+
+8.0K	./__pycache__
+ 24K	./.ipynb_checkpoints
+1.6G	./ollama_files/models/blobs
+4.0K	./ollama_files/models/manifests/registry.ollama.ai/library/gemma
+4.0K	./ollama_files/models/manifests/registry.ollama.ai/library
+4.0K	./ollama_files/models/manifests/registry.ollama.ai
+4.0K	./ollama_files/models/manifests
+`1.6G	./ollama_files/models`
+1.6G	./ollama_files
+1.6G	.
 
 ## Q5. Adding the weights 
 
@@ -96,6 +109,10 @@ COPY ...
 ```
 
 What do you put after `COPY`?
+
+```dockerfile
+COPY ./ollama_files /root/.ollama
+```
 
 ## Q6. Serving it 
 
@@ -123,14 +140,21 @@ Also, to make results reproducible, set the `temperature` parameter to 0:
 
 ```bash
 response = client.chat.completions.create(
-    #...
+    model='gemma:2b',
+    messages=[{"role": "user", "content": prompt}],
     temperature=0.0
 )
 ```
 
 How many completion tokens did you get in response?
 
-* 304
+```bash
+response.usage.total_tokens
+```
+
+The answer is `281` rounding to:
+
+* `304`
 * 604
 * 904
 * 1204
