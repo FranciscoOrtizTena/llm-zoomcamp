@@ -10,23 +10,30 @@ In this homework, we'll experiemnt with vector with and without Elasticsearch
 First, we will get the embeddings model `multi-qa-distilbert-cos-v1` from
 [the Sentence Transformer library](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html#model-overview)
 
-```bash
+```python
 from sentence_transformers import SentenceTransformer
-embedding_model = SentenceTransformer(model_name)
+model_name = 'multi-qa-distilbert-cos-v1'
+model = SentenceTransformer(model_name)
 ```
 
 Create the embedding for this user question:
 
 ```python
 user_question = "I just discovered the course. Can I still join it?"
+q1= model.encode(user_question)
+print(q1[0])
+```
+
+```text
+0.07822259
 ```
 
 What's the first value of the resulting vector?
 
-* -0.24
-* -0.04
-* 0.07
-* 0.27
+- -0.24
+- -0.04
+- `0.07`
+- 0.27
 
 
 ## Prepare the documents
