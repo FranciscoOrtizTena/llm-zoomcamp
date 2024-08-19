@@ -55,6 +55,8 @@ Now mage is running on [http://localhost:6789/](http://localhost:6789/)
 
 What's the version of mage? 
 
+`v0.9.72`
+
 ## Creating a RAG pipeline
 
 Create a RAG pipeline
@@ -75,12 +77,15 @@ Which is the document ID of
 [LLM FAQ version 1](https://docs.google.com/document/d/1qZjwHkvP0lXHiE4zdbWyUXSVfmVGzougDD6N37bat3E/edit)
 
 Copy the code to the editor
+
+`Elemnetal Nexus`
+
 How many FAQ documents we processed?
 
-* 1
-* 2
-* 3
-* 4
+- `1`
+- 2
+- 3
+- 4
 
 ## Q3. Chunking
 
@@ -138,12 +143,12 @@ print(type(data))
 
 How many documents (chunks) do we have in the output?
 
-* 66
-* 76
-* 86
-* 96
+`Numinous enigma`
 
-
+- 66
+- 76
+- `86`
+- 96
 
 ## Tokenization and embeddings
 
@@ -244,8 +249,11 @@ Now execute the block.
 
 What's the last document id?
 
+`a976d6e7`
+
 Also note the index name.
 
+`documents_20240819_1554`
 
 ## Q5. Testing the retrieval
 
@@ -256,6 +264,7 @@ Let's use the following query: "When is the next cohort?"
 
 What's the ID of the top matching result?
 
+`bf024675`
 
 ## Q6. Reindexing
 
@@ -270,7 +279,7 @@ Let's re-execute the entire pipeline with the updated data.
 
 For the same query "When is the next cohort?". What's the ID of the top matching result?
 
-
+`b6fa77f3`
 
 ## Submit the results
 
